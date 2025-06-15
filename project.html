@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>User Signup and Login App</title>
+  <link
+    href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    rel="stylesheet"
+  />
+  <style>
+    /* Reset and base styles */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: #ffffff;
+      color: #374151; /* Neutral gray for text */
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #f3f4f6;
+      padding: 16px 24px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    header h1 {
+      font-weight: 700;
+      font-size: 1.8rem;
+      color: #111827;
+      letter-spacing: 0.02em;
+      user-select: none;
+      margin: 0;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 32px 16px 64px;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    section {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+      padding: 32px;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    h2 {
+      font-size: 1.9rem;
+      font-weight: 700;
+      margin-top: 0;
+      margin-bottom: 24px;
+      color: #111827;
+    }
+
+    form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px 24px;
+    }
+
+    form.full-width {
+      grid-template-columns: 1fr;
+    }
+
+    label {
+      font-weight: 600;
+      color: #374151;
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="file"],
+    select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.8px solid #d1d5db;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="password"]:focus,
+    input[type="file"]:focus,
+    select:focus {
+      outline: none;
+      border-color: #10b981; /* Emerald accent */
+      box-shadow: 0 0 5px rgba(16, 185, 129, 0.5);
+    }
+
+    .address-group {
+      grid-column: span 2;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px 20px;
+      align-items: end;
+    }
+
+    .address-group label {
+      margin-bottom: 6px;
+    }
+
+    .address-line1 {
+      grid-column: 1 / span 2;
+    }
+
+    .address-city,
+    .address-state,
+    .address-pincode {
+      grid-column: auto;
+    }
+
+    button {
+      grid-column: span 2;
+      background: #10b981;
+      color: white;
+      font-weight: 700;
+      border: none;
+      padding: 14px 0;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+
+    button:hover,
+    button:focus {
+      background-color: #059669;
+      outline: none;
+    }
+
+    .toggle-link {
+      grid-column: span 2;
+      margin-top: 8px;
+      font-size: 0.9rem;
+      color: #4b5563;
+      user-select: none;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: underline;
+    }
+
+    .toggle-link:hover,
+    .toggle-link:focus {
+      color: #10b981;
+      outline: none;
+    }
+
+    .error-message {
+      grid-column: span 2;
+      color:rgb(38, 220, 44); /* Red 600 */
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+
+    /* Single column for some fields */
+    .full-width-field {
+      grid-column: span 2;
+    }
+
+    /* Profile picture preview */
+    .profile-pic-preview {
+      grid-column: span 2;
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .profile-pic-preview img {
+      max-height: 120px;
+      border-radius: 16px;
+      object-fit: cover;
+      border: 2px solid #10b981;
+    }
+
+    /* Dashboard styles */
+    .dashboard {
+      padding: 0;
+    }
+
+    .dashboard h2 {
+      margin-bottom: 24px;
+    }
+
+    .dashboard-content {
+      display: grid;
+      gap: 16px 24px;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .dashboard-content.full-width {
+      grid-template-columns: 1fr;
+    }
+
+    .info-label {
+      font-weight: 600;
+      color: #6b7280; /* Gray 500 */
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+    }
+
+    .info-value {
+      font-size: 1rem;
+      color: #111827;
+      word-break: break-word;
+    }
+
+    /* Responsive */
+    @media (max-width: 680px) {
+      form,
+      .address-group {
+        grid-template-columns: 1fr !important;
+      }
+      button,
+      .toggle-link,
+      .profile-pic-preview {
+        grid-column: span 1 !important;
+      }
+      .dashboard-content {
+        grid-template-columns: 1fr !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>User Signup & Login App</h1>
+  </header>
+  <main>
+    <section id="signup-section" aria-label="Signup Form Section" tabindex="-1">
+      <h2>Sign Up</h2>
+      <form id="signup-form" novalidate>
+        <div>
+          <label for="userType">User Type</label>
+          <select id="userType" name="userType" required aria-required="true" aria-describedby="userTypeError">
+            <option value="" disabled selected>Select user type</option>
+            <option value="Patient">Patient</option>
+            <option value="Doctor">Doctor</option>
+          </select>
+          <div id="userTypeError" class="error-message" aria-live="polite"></div>
+        </div>
+        <div>
+          <label for="firstName">First Name</label>
+          <input id="firstName" name="firstName" type="text" autocomplete="given-name" required aria-required="true" aria-describedby="firstNameError" />
+          <div id="firstNameError" class="error-message" aria-live="polite"></div>
+        </div>
+        <div>
+          <label for="lastName">Last Name</label>
+          <input id="lastName" name="lastName" type="text" autocomplete="family-name" required aria-required="true" aria-describedby="lastNameError" />
+          <div id="lastNameError" class="error-message" aria-live="polite"></div>
+        </div>
+
+        <div class="full-width-field">
+          <label for="profilePic">Profile Picture</label>
+          <input id="profilePic" name="profilePic" type="file" accept="image/*" aria-describedby="profilePicError" />
+          <div id="profilePicError" class="error-message" aria-live="polite"></div>
+        </div>
+
+        <div>
+          <label for="username">Username</label>
+          <input id="username" name="username" type="text" autocomplete="username" required aria-required="true" aria-describedby="usernameError" />
+          <div id="usernameError" class="error-message" aria-live="polite"></div>
+        </div>
+        <div>
+          <label for="email">Email ID</label>
+          <input id="email" name="email" type="email" autocomplete="email" required aria-required="true" aria-describedby="emailError" />
+          <div id="emailError" class="error-message" aria-live="polite"></div>
+        </div>
+        <div>
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" autocomplete="new-password" required aria-required="true" aria-describedby="passwordError" />
+          <div id="passwordError" class="error-message" aria-live="polite"></div>
+        </div>
+        <div>
+          <label for="confirmPassword">Confirm Password</label>
+          <input id="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" required aria-required="true" aria-describedby="confirmPasswordError" />
+          <div id="confirmPasswordError" class="error-message" aria-live="polite"></div>
+        </div>
+
+        <fieldset class="address-group" aria-label="Address Information">
+          <div class="address-line1">
+            <label for="addressLine1">Address Line 1</label>
+            <input id="addressLine1" name="addressLine1" type="text" required aria-required="true" aria-describedby="addressLine1Error" />
+            <div id="addressLine1Error" class="error-message" aria-live="polite"></div>
+          </div>
+          <div class="address-city">
+            <label for="city">City</label>
+            <input id="city" name="city" type="text" required aria-required="true" aria-describedby="cityError" />
+            <div id="cityError" class="error-message" aria-live="polite"></div>
+          </div>
+          <div class="address-state">
+            <label for="state">State</label>
+            <input id="state" name="state" type="text" required aria-required="true" aria-describedby="stateError" />
+            <div id="stateError" class="error-message" aria-live="polite"></div>
+          </div>
+          <div class="address-pincode">
+            <label for="pincode">Pin Code</label>
+            <input id="pincode" name="pincode" type="text" pattern="\\d{5,10}" title="Please enter a valid pin code (5 to 10 digits)" required aria-required="true" aria-describedby="pincodeError" />
+            <div id="pincodeError" class="error-message" aria-live="polite"></div>
+          </div>
+        </fieldset>
+
+        <div class="profile-pic-preview" id="profilePicPreview"></div>
+
+        <button type="submit">Sign Up</button>
+        <div class="toggle-link" id="toLogin">Already have an account? Log In</div>
+      </form>
+    </section>
+
+    <section id="login-section" aria-label="Login Form Section" tabindex="-1" hidden>
+      <h2>Log In</h2>
+      <form id="login-form" novalidate>
+        <div>
+          <label for="loginUsername">Username</label>
+          <input id="loginUsername" name="loginUsername" type="text" autocomplete="username" required aria-required="true" aria-describedby="loginUsernameError" />
+          <div id="loginUsernameError" class="error-message" aria-live="polite"></div>
+        </div>
+        <div>
+          <label for="loginPassword">Password</label>
+          <input id="loginPassword" name="loginPassword" type="password" autocomplete="current-password" required aria-required="true" aria-describedby="loginPasswordError" />
+          <div id="loginPasswordError" class="error-message" aria-live="polite"></div>
+        </div>
+        <button type="submit">Log In</button>
+        <div class="toggle-link" id="toSignup">Don't have an account? Sign Up</div>
+      </form>
+    </section>
+
+    <section id="dashboard-section" aria-label="User Dashboard" tabindex="-1" hidden>
+      <h2>Your Dashboard</h2>
+      <div id="dashboard-content" class="dashboard-content"></div>
+      <button id="logout-button" style="margin-top: 32px; background: #dc2626;">Log Out</button>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      // DOM elements
+      const signupSection = document.getElementById('signup-section');
+      const loginSection = document.getElementById('login-section');
+      const dashboardSection = document.getElementById('dashboard-section');
+
+      const signupForm = document.getElementById('signup-form');
+      const loginForm = document.getElementById('login-form');
+      const dashboardContent = document.getElementById('dashboard-content');
+      const logoutButton = document.getElementById('logout-button');
+
+      const toLoginLink = document.getElementById('toLogin');
+      const toSignupLink = document.getElementById('toSignup');
+
+      const profilePicInput = document.getElementById('profilePic');
+      const profilePicPreview = document.getElementById('profilePicPreview');
+
+      // For accessibility: focus main content container on view show
+      function focusSection(section) {
+        section.focus();
+      }
+
+      // Show a given section and hide others
+      function showSection(sectionToShow) {
+        [signupSection, loginSection, dashboardSection].forEach((section) => {
+          if (section === sectionToShow) {
+            section.hidden = false;
+            section.style.display = 'block';
+            focusSection(section);
+          } else {
+            section.hidden = true;
+            section.style.display = 'none';
+          }
+        });
+      }
+
+      // Storage key for users
+      const USERS_STORAGE_KEY = 'signupLoginAppUsers';
+
+      // Get users from localStorage
+      function getUsers() {
+        const usersJSON = localStorage.getItem(USERS_STORAGE_KEY);
+        if (!usersJSON) return {};
+        try {
+          return JSON.parse(usersJSON);
+        } catch {
+          return {};
+        }
+      }
+
+      // Save users to localStorage
+      function saveUsers(users) {
+        localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
+      }
+
+      // Validate URL safe base64 for profile pic string or empty
+      function isValidBase64Image(dataURL) {
+        return typeof dataURL === 'string' && dataURL.startsWith('data:image/');
+      }
+
+      // Show image preview for profile pic input
+      profilePicInput.addEventListener('change', () => {
+        const file = profilePicInput.files[0];
+        profilePicPreview.innerHTML = '';
+        if (file) {
+          if (!file.type.startsWith('image/')) {
+            showError('profilePicError', 'Selected file is not an image.');
+            return;
+          }
+          clearError('profilePicError');
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.alt = 'Profile Picture Preview';
+            profilePicPreview.appendChild(img);
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      // Show error message under field
+      function showError(fieldId, message) {
+        const el = document.getElementById(fieldId);
+        if (el) {
+          el.textContent = message;
+        }
+      }
+
+      // Clear error message
+      function clearError(fieldId) {
+        const el = document.getElementById(fieldId);
+        if (el) {
+          el.textContent = '';
+        }
+      }
+
+      // Clear all signup errors
+      function clearSignupErrors() {
+        const fields = [
+          'userTypeError',
+          'firstNameError',
+          'lastNameError',
+          'profilePicError',
+          'usernameError',
+          'emailError',
+          'passwordError',
+          'confirmPasswordError',
+          'addressLine1Error',
+          'cityError',
+          'stateError',
+          'pincodeError',
+        ];
+        fields.forEach(clearError);
+      }
+
+      // Validate email format
+      function isValidEmail(email) {
+        // Basic regex for email validation
+        return /^\S+@\S+\.\S+$/.test(email);
+      }
+
+      // Validate pin code format (digits only, length 5-10)
+      function isValidPinCode(pin) {
+        return /^\d{5,10}$/.test(pin);
+      }
+
+      // Signup form validation
+      function validateSignup(formData) {
+        let valid = true;
+
+        clearSignupErrors();
+
+        if (!formData.get('userType')) {
+          showError('userTypeError', 'Please select user type.');
+          valid = false;
+        }
+        if (!formData.get('firstName').trim()) {
+          showError('firstNameError', 'First name is required.');
+          valid = false;
+        }
+        if (!formData.get('lastName').trim()) {
+          showError('lastNameError', 'Last name is required.');
+          valid = false;
+        }
+
+        // Profile picture optional - validate only if selected
+        const profilePicFile = profilePicInput.files[0];
+        if (profilePicFile && !profilePicFile.type.startsWith('image/')) {
+          showError('profilePicError', 'Profile picture must be an image file.');
+          valid = false;
+        }
+
+        const username = formData.get('username').trim();
+        if (!username) {
+          showError('usernameError', 'Username is required.');
+          valid = false;
+        } else {
+          const users = getUsers();
+          if (users[username]) {
+            showError('usernameError', 'Username already exists.');
+            valid = false;
+          }
+        }
+
+        const email = formData.get('email').trim();
+        if (!email) {
+          showError('emailError', 'Email is required.');
+          valid = false;
+        } else if (!isValidEmail(email)) {
+          showError('emailError', 'Invalid email format.');
+          valid = false;
+        }
+
+        const password = formData.get('password');
+        if (!password) {
+          showError('passwordError', 'Password is required.');
+          valid = false;
+        } else if (password.length < 6) {
+          showError('passwordError', 'Password must be at least 6 characters.');
+          valid = false;
+        }
+
+        const confirmPassword = formData.get('confirmPassword');
+        if (!confirmPassword) {
+          showError('confirmPasswordError', 'Confirm your password.');
+          valid = false;
+        } else if (password !== confirmPassword) {
+          showError('confirmPasswordError', 'Passwords do not match.');
+          valid = false;
+        }
+
+        if (!formData.get('addressLine1').trim()) {
+          showError('addressLine1Error', 'Address Line 1 is required.');
+          valid = false;
+        }
+        if (!formData.get('city').trim()) {
+          showError('cityError', 'City is required.');
+          valid = false;
+        }
+        if (!formData.get('state').trim()) {
+          showError('stateError', 'State is required.');
+          valid = false;
+        }
+        const pincode = formData.get('pincode').trim();
+        if (!pincode) {
+          showError('pincodeError', 'Pin Code is required.');
+          valid = false;
+        } else if (!isValidPinCode(pincode)) {
+          showError('pincodeError', 'Pin Code must be 5-10 digits.');
+          valid = false;
+        }
+
+        return valid;
+      }
+
+      // Save user to localStorage
+      async function saveUser(formData) {
+        const users = getUsers();
+        const username = formData.get('username').trim();
+
+        // Read profile picture as data URL
+        let profilePicDataUrl = '';
+        if (profilePicInput.files[0]) {
+          profilePicDataUrl = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target.result);
+            reader.readAsDataURL(profilePicInput.files[0]);
+          });
+        }
+
+        users[username] = {
+          userType: formData.get('userType'),
+          firstName: formData.get('firstName').trim(),
+          lastName: formData.get('lastName').trim(),
+          profilePic: profilePicDataUrl,
+          username,
+          email: formData.get('email').trim(),
+          password: formData.get('password'), // plaintext for demo only (not for real world use)
+          address: {
+            line1: formData.get('addressLine1').trim(),
+            city: formData.get('city').trim(),
+            state: formData.get('state').trim(),
+            pincode: formData.get('pincode').trim(),
+          },
+        };
+
+        saveUsers(users);
+      }
+
+      // Render dashboard data for logged in user
+      function renderDashboard(user) {
+        dashboardContent.innerHTML = ''; // Clear previous
+
+        const userTypeEl = createInfoPair('User Type', user.userType);
+        const nameEl = createInfoPair(
+          'Full Name',
+          `${user.firstName} ${user.lastName}`
+        );
+
+        // Profile picture
+        const profilePicEl = document.createElement('div');
+        profilePicEl.style.gridColumn = 'span 2';
+        profilePicEl.style.display = 'flex';
+        profilePicEl.style.justifyContent = 'center';
+        profilePicEl.style.marginBottom = '24px';
+
+        const img = document.createElement('img');
+        img.alt = 'Profile Picture';
+        img.style.maxHeight = '140px';
+        img.style.borderRadius = '16px';
+        img.style.objectFit = 'cover';
+        if (user.profilePic && user.profilePic.startsWith('data:image/')) {
+          img.src = user.profilePic;
+        } else {
+          img.src =
+            'https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/749b1112-5191-48ff-a8ce-26d739ed0110.png';
+        }
+        profilePicEl.appendChild(img);
+
+        const usernameEl = createInfoPair('Username', user.username);
+        const emailEl = createInfoPair('Email ID', user.email);
+        const addressLine1El = createInfoPair('Address Line 1', user.address.line1);
+        const cityEl = createInfoPair('City', user.address.city);
+        const stateEl = createInfoPair('State', user.address.state);
+        const pincodeEl = createInfoPair('Pin Code', user.address.pincode);
+
+        dashboardContent.appendChild(profilePicEl);
+        dashboardContent.appendChild(userTypeEl);
+        dashboardContent.appendChild(nameEl);
+        dashboardContent.appendChild(usernameEl);
+        dashboardContent.appendChild(emailEl);
+        dashboardContent.appendChild(addressLine1El);
+        dashboardContent.appendChild(cityEl);
+        dashboardContent.appendChild(stateEl);
+        dashboardContent.appendChild(pincodeEl);
+      }
+
+      // Helper: Create label-value pair for dashboard
+      function createInfoPair(label, value) {
+        const container = document.createElement('div');
+
+        const labelEl = document.createElement('div');
+        labelEl.className = 'info-label';
+        labelEl.textContent = label;
+
+        const valueEl = document.createElement('div');
+        valueEl.className = 'info-value';
+        valueEl.textContent = value;
+
+        container.appendChild(labelEl);
+        container.appendChild(valueEl);
+
+        return container;
+      }
+
+      // Show Signup form initially or dashboard if logged in
+      function initApp() {
+        // Check if user was logged in previously
+        const loggedInUsername = sessionStorage.getItem('loggedInUser');
+        if (loggedInUsername) {
+          const users = getUsers();
+          const user = users[loggedInUsername];
+          if (user) {
+            showSection(dashboardSection);
+            renderDashboard(user);
+            return;
+          } else {
+            sessionStorage.removeItem('loggedInUser');
+          }
+        }
+        showSection(signupSection);
+      }
+
+      // Handle signup form submit
+      signupForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(signupForm);
+
+        if (!validateSignup(formData)) {
+          return;
+        }
+
+        await saveUser(formData);
+        alert('Signup successful! Please login now.');
+
+        signupForm.reset();
+        profilePicPreview.innerHTML = '';
+        showSection(loginSection);
+      });
+
+      // Handle login form submit
+      loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        clearLoginErrors();
+
+        const username = loginForm.loginUsername.value.trim();
+        const password = loginForm.loginPassword.value;
+
+        let valid = true;
+
+        if (!username) {
+          showError('loginUsernameError', 'Username is required.');
+          valid = false;
+        }
+        if (!password) {
+          showError('loginPasswordError', 'Password is required.');
+          valid = false;
+        }
+        if (!valid) return;
+
+        const users = getUsers();
+        const user = users[username];
+        if (!user) {
+          showError('loginUsernameError', 'User not found.');
+          return;
+        }
+        if (user.password !== password) {
+          showError('loginPasswordError', 'Incorrect password.');
+          return;
+        }
+
+        // Successful login
+        sessionStorage.setItem('loggedInUser', username);
+        loginForm.reset();
+        showSection(dashboardSection);
+        renderDashboard(user);
+      });
+
+      // Clear login errors
+      function clearLoginErrors() {
+        ['loginUsernameError', 'loginPasswordError'].forEach(clearError);
+      }
+
+      // Toggle to login view
+      toLoginLink.addEventListener('click', () => {
+        signupForm.reset();
+        profilePicPreview.innerHTML = '';
+        clearSignupErrors();
+        showSection(loginSection);
+      });
+
+      // Toggle to signup view
+      toSignupLink.addEventListener('click', () => {
+        loginForm.reset();
+        clearLoginErrors();
+        showSection(signupSection);
+      });
+
+      // Logout handler
+      logoutButton.addEventListener('click', () => {
+        sessionStorage.removeItem('loggedInUser');
+        showSection(loginSection);
+      });
+
+      // Initialize app on page load
+      initApp();
+    })();
+  </script>
+</body>
+</html>
+
+ 
